@@ -1,0 +1,63 @@
+<!-- orders/cart.html -->
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Редагування профілю</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'orders/style.css' %}">
+</head>
+<body>
+    <div class="container">
+        <h1>Ласкаво просимо до нашої кондитерської!</h1>
+
+        <div class="buttons">
+            <!-- Змінюємо кнопку на "До головної" -->
+            <a href="{% url 'index' %}" class="btn">До головної</a>
+            <a href="{% url 'order_form' %}" class="btn">Оформити замовлення</a>
+            <a href="{% url 'about' %}" class="btn">Про нас</a>
+
+            {% if request.user.is_authenticated %}
+                <form action="{% url 'logout' %}" method="post" style="display:inline;">
+                    {% csrf_token %}
+                        <button type="submit" class="btn">Вийти</button>
+                </form>
+            {% else %}
+                <a href="{% url 'login' %}" class="btn">Увійти</a>
+            {% endif %}
+        </div>
+
+        <h2>Ваш кошик</h2>
+        {% if cart.items %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Продукт</th>
+                        <th>Кількість</th>
+                        <th>Ціна</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in cart.items.all %}
+                    <tr>
+                        <td>{{ item.product.name }}</td>
+                        <td>{{ item.quantity }}</td>
+                        <td>{{ item.total_price }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+        <h2>Загальна сума: {{ total_price }} грн</h2>
+
+        <a href="{% url 'order_form' %}" class="btn">До оформлення замовлення</a>
+
+        <a href="{% url 'product_list' %}" class="btn">Назад</a>
+
+        {% else %}
+            <p>Ваш кошик порожній.</p>
+        {% endif %}
+    </div>
+</body>
+</html>

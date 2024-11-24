@@ -1,0 +1,13 @@
+<!-- orders/templates/orders/order_success.html -->
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Замовлення успішне</title>
+</head>
+<body>
+    <h1>Дякуємо, {{ name }}!</h1>
+    <p>Ваше замовлення на {{ quantity }} шт. {{ product }} було прийняте!</p>
+    <p><a href="{% url 'index' %}">Повернутися на головну</a></p>
+</body>
+</html>

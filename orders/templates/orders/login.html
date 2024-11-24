@@ -1,0 +1,35 @@
+<!-- orders/login.html -->
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Вхід</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'orders/style.css' %}">
+</head>
+<body>
+    <div class="container">
+        <h1>Ласкаво просимо до нашої кондитерської!</h1>
+
+        <div class="buttons">
+            <a href="{% url 'product_list' %}" class="btn">Переглянути продукцію</a>
+            <a href="{% url 'order_form' %}" class="btn">Оформити замовлення</a>
+            <a href="{% url 'about' %}" class="btn">Про нас</a>
+
+            <!-- Змінюємо кнопку на "До головної" -->
+            <a href="{% url 'index' %}" class="btn">До головної</a>
+        </div>
+         <!-- Форма входу -->
+        <div class="auth-form">
+            <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit">Увійти</button>
+            </form>
+
+            <!-- Додаємо напис про реєстрацію -->
+            <p>Якщо у вас немає аккаунту, <a href="{% url 'register' %}">створіть його</a></p>
+        </div>
+    </div>
+</body>
+</html>

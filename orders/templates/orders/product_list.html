@@ -1,0 +1,60 @@
+<!-- product_list.html -->
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Переглянути продукцію</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'orders/style.css' %}">
+</head>
+<body>
+    <div class="container">
+        <h1>Ласкаво просимо до нашої кондитерської!</h1>
+
+        <div class="buttons">
+            <!-- Змінюємо кнопку на "До головної" -->
+            <a href="{% url 'index' %}" class="btn">До головної</a>
+            <a href="{% url 'order_form' %}" class="btn">Оформити замовлення</a>
+            <a href="{% url 'about' %}" class="btn">Про нас</a>
+
+            {% if request.user.is_authenticated %}
+                <form action="{% url 'logout' %}" method="post" style="display:inline;">
+                    {% csrf_token %}
+                        <button type="submit" class="btn">Вийти</button>
+                </form>
+            {% else %}
+                <a href="{% url 'login' %}" class="btn">Увійти</a>
+            {% endif %}
+        </div>
+
+        <h2 style="text-align: center; margin-top: 20px;">Наша продукція</h2>
+
+        <div class="products">
+            {% for product in products %}
+                <div class="product">
+                    <h3>{{ product.name }}</h3>
+                    <p>{{ product.description }}</p>
+                    <p>Ціна: {{ product.price }} грн</p>
+
+                    <!-- Відображення зображення продукту, якщо воно є -->
+                    {% if product.image %}
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}" style="width: 200px; height: auto;">
+                    {% endif %}
+
+                    <!-- Додати до кошика -->
+                    {% if request.user.is_authenticated %}
+                        <form method="post" action="{% url 'add_to_cart' product.id %}">
+                            {% csrf_token %}
+                            <label for="quantity">Кількість:</label>
+                            <input type="number" name="quantity" id="quantity" value="1" min="1">
+                            <button type="submit">Додати до кошика</button>
+                        </form>
+                    {% else %}
+                        <a href="{% url 'login' %}?next={% url 'cart' %}" class="btn">Додати в кошик</a>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>

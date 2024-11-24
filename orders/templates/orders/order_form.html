@@ -1,0 +1,77 @@
+<!-- order_form.html (кошик) -->
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Кошик</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'orders/style.css' %}">
+</head>
+<body>
+    <div class="container">
+        <h1>Ласкаво просимо до нашої кондитерської!</h1>
+
+        <div class="buttons">
+            <a href="{% url 'product_list' %}" class="btn">Переглянути продукцію</a>
+            <!-- Змінюємо кнопку на "До головної" -->
+            <a href="{% url 'index' %}" class="btn">До головної</a>
+            <a href="{% url 'about' %}" class="btn">Про нас</a>
+
+            {% if request.user.is_authenticated %}
+                <form action="{% url 'logout' %}" method="post" style="display:inline;">
+                    {% csrf_token %}
+                        <button type="submit" class="btn">Вийти</button>
+                </form>
+            {% else %}
+                <a href="{% url 'login' %}" class="btn">Увійти</a>
+            {% endif %}
+        </div>
+        <h1>Кошик</h1>
+
+        {% if cart.items %}
+            <table class="cart-table">
+                <tr>
+                    <th>Товар</th>
+                    <th>Кількість</th>
+                    <th>Ціна за одиницю</th>
+                    <th>Сума</th>
+                    <th>Дії</th>
+                </tr>
+                {% for item in cart.items.all %}
+                <tr>
+                    <td>{{ item.product.name }}</td>
+                    <td>
+                        <!-- Форма для зменшення або збільшення кількості -->
+                        <form method="POST" action="{% url 'update_cart_item' item.id %}">
+                            {% csrf_token %}
+                            <input type="number" name="quantity" min="1" value="{{ item.quantity }}">
+                            <button type="submit">Оновити</button>
+                        </form>
+                    </td>
+                    <td>{{ item.product.price }} грн</td>
+                    <td>{{ item.get_total_price }} грн</td>
+                    <td>
+                        <!-- Кнопка для видалення елементу з кошика -->
+                        <form method="POST" action="{% url 'remove_from_cart' item.id %}">
+                            {% csrf_token %}
+                            <button type="submit">Видалити</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+
+            <!-- Відображення загальної суми -->
+            <h2>Загальна сума: {{ total_price }} грн</h2>
+
+            <!-- Кнопка для оформлення замовлення -->
+            <form method="POST" action="{% url 'checkout' %}">
+                {% csrf_token %}
+                <button type="submit" class="btn-submit">Оформити замовлення</button>
+            </form>
+        {% else %}
+            <p>Кошик порожній.</p>
+        {% endif %}
+    </div>
+</body>
+</html>

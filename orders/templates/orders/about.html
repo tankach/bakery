@@ -1,0 +1,71 @@
+<!-- orders/about.html -->
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Про нас - Кондитерська</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'orders/style.css' %}">
+</head>
+<body>
+    <div class="container">
+        <h1>Ласкаво просимо до нашої кондитерської!</h1>
+
+        <div class="buttons">
+            <a href="{% url 'product_list' %}" class="btn">Переглянути продукцію</a>
+            <a href="{% url 'order_form' %}" class="btn">Оформити замовлення</a>
+            <!-- Змінюємо кнопку на "До головної" -->
+            <a href="{% url 'index' %}" class="btn">До головної</a>
+
+            {% if request.user.is_authenticated %}
+                <form action="{% url 'logout' %}" method="post" style="display:inline;">
+                    {% csrf_token %}
+                        <button type="submit" class="btn">Вийти</button>
+                </form>
+            {% else %}
+                <a href="{% url 'login' %}" class="btn">Увійти</a>
+            {% endif %}
+        </div>
+        <h1>Залиште коментар</h1>
+    <form id="commentForm" method="post">
+        <label for="name">Ім'я:</label><br>
+        <input type="text" id="name" name="name"><br>
+        <label for="comment">Коментар:</label><br>
+        <textarea id="comment" name="comment"></textarea><br><br>
+        <input type="submit" value="Надіслати">
+    </form>
+
+    <div id="responseMessage"></div>
+
+    <script>
+        // AJAX-відправка форми
+        $(document).ready(function() {
+            $('#commentForm').submit(function(event) {
+                event.preventDefault();  // Зупиняємо стандартне відправлення форми
+
+                $.ajax({
+                    url: "{% url 'submit_comment' %}",  // URL для обробки форми
+                    type: "POST",  // Тип запиту
+                    data: {
+                        name: $('#name').val(),  // Дані форми
+                        comment: $('#comment').val(),
+                        csrfmiddlewaretoken: '{{ csrf_token }}'  // CSRF-токен для захисту
+                    },
+                    success: function(response) {
+                        // Обробка відповіді сервера
+                        if (response.status == 'success') {
+                            $('#responseMessage').html('<p style="color: green;">' + response.message + '</p>');
+                        } else {
+                            $('#responseMessage').html('<p style="color: red;">' + response.message + '</p>');
+                        }
+                    },
+                    error: function(response) {
+                        $('#responseMessage').html('<p style="color: red;">Виникла помилка при відправці форми.</p>');
+                    }
+                });
+            });
+        });
+    </script>
+    </div>
+</body>
+</html>

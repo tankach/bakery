@@ -1,0 +1,84 @@
+<!-- orders/profile.html -->
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Головна - Кондитерська</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'orders/style.css' %}">
+</head>
+<body>
+    <div class="container">
+        <h1>Ласкаво просимо до нашої кондитерської!</h1>
+
+        <div class="buttons">
+            <a href="{% url 'product_list' %}" class="btn">Переглянути продукцію</a>
+            <a href="{% url 'order_form' %}" class="btn">Оформити замовлення</a>
+            <a href="{% url 'about' %}" class="btn">Про нас</a>
+            <a href="{% url 'index' %}" class="btn">До головної</a>
+        </div>
+
+        <h2>Кабінет користувача</h2>
+        <h3>Ваш профіль: {{ user.username }} <a href="{% url 'logout' %}">Вийти</a></h3>
+
+        <!-- Editable fields for phone, address, and real name -->
+        <form method="post" id="user-details-form">
+            {% csrf_token %}
+            {{ form.as_p }}
+
+            <button type="submit" id="save-button" class="btn-submit disabled" disabled>Зберегти</button>
+        </form>
+
+        <!-- Password change section -->
+        <a href="{% url 'change_password' %}" class="btn">Змінити пароль</a>
+        <h3>Історія ваших замовлень</h3>
+        {% if orders %}
+        <table>
+            <thead>
+                <tr>
+                    <th>ID замовлення</th>
+                    <th>Дата</th>
+                    <th>Загальна сума</th>
+                    <th>Деталі</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                <tr>
+                    <td>{{ order.id }}</td>
+                    <td>{{ order.created_at }}</td>
+                    <td>{{ order.total }} грн</td>
+                    <td>
+                        <ul>
+                            {% for item in order.items.all %}
+                            <li>{{ item.product.name }} - {{ item.quantity }} шт. за {{ item.price }} грн</li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p>У вас ще немає замовлень.</p>
+        {% endif %}
+    </div>
+<script>
+
+    function enableSaveButton() {
+        var saveButton = document.getElementById("save-button");
+        saveButton.classList.remove("disabled");
+        saveButton.classList.add("enabled");
+        saveButton.disabled = false;
+    }
+
+    // Додаємо слухачі подій для всіх полів вводу в формі профілю
+    document.addEventListener("DOMContentLoaded", function () {
+        var formFields = document.querySelectorAll("#user-details-form input");
+        formFields.forEach(function (field) {
+            field.addEventListener("input", enableSaveButton);
+        });
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,76 @@
+<!-- orders/index.html -->
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Головна - Кондитерська</title>
+    {% load static %}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="{% static 'orders/style.css' %}">
+</head>
+<body>
+    <div class="container">
+        <h1>Ласкаво просимо до нашої кондитерської!</h1>
+
+        <!-- Перевірка авторизації користувача -->
+        <div class="buttons">
+            <a href="{% url 'product_list' %}" class="btn">Переглянути продукцію</a>
+            <a href="{% url 'order_form' %}" class="btn">Оформити замовлення</a>
+            <a href="{% url 'about' %}" class="btn">Про нас</a>
+
+            <!-- Кнопка для входу/виходу, залежно від авторизації -->
+            {% if request.user.is_authenticated %}
+                <form action="{% url 'logout' %}" method="post" style="display:inline;">
+                    {% csrf_token %}
+                        <button type="submit" class="btn">Вийти</button>
+                </form>
+                <a href="{% url 'user_profile' %}" class="btn">Кабінет</a>
+            {% else %}
+                <a href="{% url 'login' %}" class="btn">Увійти</a>
+            {% endif %}
+        </div>
+
+        <div class="product-image">
+            <img src="{% static 'orders/images/produkcia.png' %}" alt="Продукція">
+        </div>
+    </div>
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <form action="{% url 'order_form' %}" method="post" style="display:inline;">
+                {% csrf_token %}
+                <p id="modalText">Текст буде тут...</p>
+                <button class="close-modal" id="continueButton">Далі</button>
+            </form>
+        </div>
+    </div>
+    <script>
+        $(document).ready(function() {
+            // Коли користувач натискає на кнопку
+            $('#showTextButton').click(function() {
+                // AJAX-запит для отримання тексту
+                $.ajax({
+                    url: "/get_text/",  // URL для обробки запиту
+                    type: "GET",  // Тип запиту (GET)
+                    success: function(response) {
+                        // Виведення тексту в модальне вікно
+                        $('#modalText').html(response.message);
+
+                        // Відображення модального вікна
+                        $('#myModal').css('display', 'flex');
+                    },
+                    error: function() {
+                        $('#modalText').html('Виникла помилка при обробці запиту.');
+                        $('#myModal').css('display', 'flex');
+                    }
+                });
+            });
+
+            // Коли користувач натискає на кнопку "Далі" в модальному вікні
+            $('#continueButton').click(function() {
+                // Закрити модальне вікно
+                $('#myModal').css('display', 'none');
+            });
+        });
+    </script>
+</body>
+</html>
