@@ -29,23 +29,24 @@ jobs:
           pip install --upgrade pip
           pip install -r requirements.txt
 
-      # Крок 4: Встановлення Node.js і Newman
+      # Крок 4: Встановлення Node.js (версія 16 або новіша)
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '14'  # Встановлюємо Node.js версії 14 (або іншої, яку ви використовуєте)
+          node-version: '16'  # Встановлюємо Node.js версії 16
 
+      # Крок 5: Встановлення Newman
       - name: Install Newman
         run: |
           npm install -g newman  # Встановлюємо Newman глобально
 
-      # Крок 5: Запуск API тестів через Newman (Postman CLI)
+      # Крок 6: Запуск API тестів через Newman (Postman CLI)
       - name: Run Postman API Tests
         run: |
           # Запускаємо Newman з колекцією та середовищем
           newman run bakery.postman_collection.json --environment bakery.postman_environment.json --reporters junit --reporter-junit-export results.xml
 
-      # Крок 6: Публікація результатів тестування
+      # Крок 7: Публікація результатів тестування
       - name: Publish test results
         if: always()  # Цей крок виконується навіть у разі помилки тестів
         run: |
