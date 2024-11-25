@@ -3,14 +3,14 @@ name: API Testing CI/CD Pipeline
 on:
   push:
     branches:
-      - main  # Запуск тестів при push в основну гілку
+      - main  # Виконання тестів при пуші на основну гілку
   pull_request:
     branches:
       - main  # Запуск тестів при pull request на основну гілку
 
 jobs:
   api-tests:
-    runs-on: ubuntu-latest  # Використовуємо останню версію Ubuntu
+    runs-on: ubuntu-latest  # Використовуємо Ubuntu для CI/CD
 
     steps:
       # Крок 1: Checkout коду з репозиторію
@@ -29,19 +29,26 @@ jobs:
           pip install --upgrade pip
           pip install -r requirements.txt
 
-      # Крок 4: Запуск API тестів через Postman або інший інструмент
-      - name: Run API Tests
-        run: |
-          # Запуск тестів через Newman (CLI інтерфейс для Postman)
-          npm install -g newman
-          npm update
-          newman run bakery.postman_collection.json --reporters junit --reporter-junit-export results.xml --verbose
-        env:
-          POSTMAN_API_KEY: ${{ secrets.POSTMAN_API_KEY }}  # Якщо ви використовуєте Postman API Key для доступу до тестів
+      # Крок 4: Встановлення Node.js і Newman
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'  # Встановлюємо Node.js версії 14 (або іншої, яку ви використовуєте)
 
-      # Крок 5: Публікація результатів тестування
+      - name: Install Newman
+        run: |
+          npm install -g newman  # Встановлюємо Newman глобально
+
+      # Крок 5: Запуск API тестів через Newman (Postman CLI)
+      - name: Run Postman API Tests
+        run: |
+          # Запускаємо Newman з колекцією та середовищем
+          newman run bakery.postman_collection.json --environment bakery.postman_environment.json --reporters junit --reporter-junit-export results.xml
+
+      # Крок 6: Публікація результатів тестування
       - name: Publish test results
         if: always()  # Цей крок виконується навіть у разі помилки тестів
         run: |
-          # Публікуємо або записуємо лог у вашу CI/CD систему
+          # Публікуємо або записуємо лог у ваш CI/CD систему
           # Можна використовувати lcov, junit, або інші формати для звітів
+          cat results.xml
