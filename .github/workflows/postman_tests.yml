@@ -33,8 +33,9 @@ jobs:
       - name: Run API Tests
         run: |
           # Запуск тестів через Newman (CLI інтерфейс для Postman)
-          npm install -g newman  # Встановлюємо Newman, якщо він ще не встановлений
-          newman run bakery.postman_collection.json --reporters junit --reporter-junit-export results.xml
+          npm install -g newman
+          npm update
+          newman run bakery.postman_collection.json --reporters junit --reporter-junit-export results.xml --verbose
         env:
           POSTMAN_API_KEY: ${{ secrets.POSTMAN_API_KEY }}  # Якщо ви використовуєте Postman API Key для доступу до тестів
 
