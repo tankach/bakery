@@ -43,7 +43,7 @@ jobs:
       # Крок 6: Запуск API тестів через Newman (Postman CLI)
       - name: Run Postman API Tests
         run: |
-          # Запускаємо Newman з колекцією та середовищем
+          newman --version  # Логування версії Newman для перевірки
           newman run bakery.postman_collection.json --environment bakery.postman_environment.json --reporters junit --reporter-junit-export results.xml
 
       # Крок 7: Публікація результатів тестування
