@@ -3,7 +3,7 @@ name: API Testing CI/CD Pipeline
 on:
   push:
     branches:
-      - main  # Змінюйте на свою основну гілку
+      - main  # Запуск тестів при push в основну гілку
   pull_request:
     branches:
       - main  # Запуск тестів при pull request на основну гілку
@@ -37,10 +37,10 @@ jobs:
           newman run bakery.postman_collection.json --reporters junit --reporter-junit-export results.xml
         env:
           POSTMAN_API_KEY: ${{ secrets.POSTMAN_API_KEY }}  # Якщо ви використовуєте Postman API Key для доступу до тестів
-          
+
       # Крок 5: Публікація результатів тестування
       - name: Publish test results
         if: always()  # Цей крок виконується навіть у разі помилки тестів
         run: |
-          # Публікуємо або записуємо лог у ваш CI/CD систему
+          # Публікуємо або записуємо лог у вашу CI/CD систему
           # Можна використовувати lcov, junit, або інші формати для звітів
