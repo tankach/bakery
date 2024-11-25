@@ -1,20 +1,46 @@
-name: Run API Tests
+name: API Testing CI/CD Pipeline
 
 on:
   push:
     branches:
-      - main
+      - main  # Змінюйте на свою основну гілку
+  pull_request:
+    branches:
+      - main  # Запуск тестів при pull request на основну гілку
 
 jobs:
-  api_tests:
-    runs-on: ubuntu-latest
+  api-tests:
+    runs-on: ubuntu-latest  # Використовуємо останню версію Ubuntu
 
     steps:
+      # Крок 1: Checkout коду з репозиторію
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Run Postman Tests
-        uses: dannydainton/gh-action-postman@v2
+      # Крок 2: Налаштування Python середовища
+      - name: Set up Python
+        uses: actions/setup-python@v2
         with:
-          collection: tests/postman_collection.json
-          environment: tests/postman_environment.json
+          python-version: '3.9'  # Ось, наприклад, Python 3.9
+
+      # Крок 3: Встановлення залежностей з requirements.txt
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # Крок 4: Запуск API тестів через Postman або інший інструмент
+      - name: Run API Tests
+        run: |
+          # Запуск тестів через Newman (CLI інтерфейс для Postman)
+          npm install -g newman  # Встановлюємо Newman, якщо він ще не встановлений
+          newman run tests/api_tests.json --environment tests/postman_environment.json  # Замість tests/api_tests.json, вказуйте шлях до вашого файлу з тестами
+        env:
+          POSTMAN_API_KEY: ${{ secrets.POSTMAN_API_KEY }}  # Якщо ви використовуєте Postman API Key для доступу до тестів
+          
+      # Крок 5: Публікація результатів тестування
+      - name: Publish test results
+        if: always()  # Цей крок виконується навіть у разі помилки тестів
+        run: |
+          # Публікуємо або записуємо лог у ваш CI/CD систему
+          # Можна використовувати lcov, junit, або інші формати для звітів
