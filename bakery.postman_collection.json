@@ -1,0 +1,34 @@
+{
+	"info": {
+		"_postman_id": "e8c09ed9-50b7-4493-883b-810a53bc4c4d",
+		"name": "bakery",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "39981012"
+	},
+	"item": [
+		{
+			"name": "створення замовлення",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "orders",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "order2",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		}
+	]
+}
