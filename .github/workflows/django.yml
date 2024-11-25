@@ -32,6 +32,7 @@ jobs:
           pip install pytest pytest-django pytest-cov  
 
       
-      - name: Run tests with coverage
-        run: |
-          pytest --cov=orders  
+      - name: Run tests
+        run: pytest --cov=orders
+        env:
+          DJANGO_SETTINGS_MODULE: myproject.settings_test 
