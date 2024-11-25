@@ -1,5 +1,6 @@
 behave
 selenium
+newman
 
 Django>=4.0,<5.0
 pytest>=6.0
