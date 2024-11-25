@@ -1,2 +1,3 @@
 behave
+behave-html-reporter
 selenium
