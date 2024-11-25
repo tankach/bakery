@@ -1,2 +1,7 @@
 behave
 selenium
+
+Django>=4.0,<5.0
+pytest>=6.0
+pytest-django>=4.0
+pytest-cov>=2.0

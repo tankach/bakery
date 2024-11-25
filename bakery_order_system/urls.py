@@ -6,8 +6,19 @@ from orders.views import user_profile, edit_profile, about
 from django.contrib import admin
 from django.conf import settings
 from django.conf.urls.static import static
+from django.urls import include
+from rest_framework.routers import DefaultRouter
+from orders.views import ProductViewSet,OrderViewSet
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+
+router = DefaultRouter()
+router.register(r'order', OrderViewSet, basename='order')
+router.register(r'products', ProductViewSet, basename='product')
 
 urlpatterns = [
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/', include(router.urls)),  # Додаємо всі маршрути API
     path('admin/', admin.site.urls),
     path('', views.index, name='index'),
     path('about/', about, name='about'),

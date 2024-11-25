@@ -8,6 +8,30 @@ from django.contrib.auth.forms import PasswordChangeForm
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from .forms import CommentForm
+from rest_framework.viewsets import ModelViewSet
+from .models import Product
+from .serializers import ProductSerializer,OrderSerializer
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.views import APIView
+from rest_framework.response import Response
+
+class ProtectedView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        return Response({"message": "This is a protected view"})
+
+class OrderViewSet(ModelViewSet):
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer
+    permission_classes = [IsAuthenticated]
+
+class ProductViewSet(ModelViewSet):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+
+def perform_create(self, serializer):
+    serializer.save(user=self.request.user)
 
 def get_text(request):
     data = {
